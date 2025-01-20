@@ -3,7 +3,7 @@ const TRIES = 6;
 const KEYBOARD_LETTERS = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫']
+    ['↵', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫']
 ];
 
 let WORDS = [];
@@ -73,7 +73,7 @@ function handleKeyPress(key) {
             currentWord = currentWord.slice(0, -1);
             updateBoard();
         }
-    } else if (key === 'Enter') {
+    } else if (key === '↵') {
         if (currentWord.length === WORD_LENGTH) {
             checkWord();
         }
@@ -209,7 +209,7 @@ document.addEventListener('keydown', (e) => {
     if (key === 'BACKSPACE') {
         handleKeyPress('⌫');
     } else if (key === 'ENTER') {
-        handleKeyPress('Enter');
+        handleKeyPress('↵');
     } else if (/^[A-Z]$/.test(key)) {
         handleKeyPress(key);
     }
