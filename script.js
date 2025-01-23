@@ -115,7 +115,34 @@ function resetGame() {
     document.getElementById('newGameBtn').style.display = 'none';
 }
 
-function checkWord() {
+// Add this function to show the modal
+function showModal(title, word, meaning) {
+    const modal = document.getElementById('resultModal');
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalWord').textContent = `Word: ${word}`;
+    document.getElementById('modalMeaning').textContent = `Meaning: ${meaning}`;
+    modal.style.display = 'block';
+}
+
+// Add this function to fetch word meaning
+async function getWordMeaning(word) {
+    try {
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+        const data = await response.json();
+        
+        if (data && data[0]) {
+            const meaning = data[0].meanings[0]?.definitions[0]?.definition || "Definition not found";
+            return meaning;
+        }
+        return "Definition not found";
+    } catch (error) {
+        console.error('Error fetching word meaning:', error);
+        return "Definition not found";
+    }
+}
+
+// Update the checkWord function
+async function checkWord() {
     if (!WORDS.includes(currentWord)) {
         alert('Not a valid word!');
         return;
@@ -177,14 +204,16 @@ function checkWord() {
 
     if (correct === WORD_LENGTH) {
         gameOver = true;
-        alert('Congratulations! You won!');
+        const meaning = await getWordMeaning(targetWord);
+        showModal('Congratulations! You won! 🎉', targetWord, meaning);
         document.getElementById('newGameBtn').style.display = 'block';
         return;
     }
 
     if (currentRow === TRIES - 1) {
         gameOver = true;
-        alert(`Game Over! The word was ${targetWord}`);
+        const meaning = await getWordMeaning(targetWord);
+        showModal('Game Over!', targetWord, meaning);
         document.getElementById('newGameBtn').style.display = 'block';
         return;
     }
@@ -201,6 +230,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Add new game button listener
     document.getElementById('newGameBtn').addEventListener('click', resetGame);
+
+    const modal = document.getElementById('resultModal');
+    const closeBtn = document.getElementById('modalClose');
+
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
 });
 
 // Add keyboard support
